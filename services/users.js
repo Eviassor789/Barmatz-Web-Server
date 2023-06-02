@@ -28,14 +28,24 @@ const updateUserByName = async (username, chatsList) => {
     return await user.save();
 }
 
-const deleteChatById = async (id) => {
+const deleteUserById = async (id) => {
     const user = await readChatById(id);
     if (!user) return null;
     return await user.deleteOne();
 }
 
-const deleteChatByName = async (username) => {
+const deleteUserByName = async (username) => {
     const user = await readChatByName(username);
     if (!user) return null;
     return await user.deleteOne();
 }
+
+export {
+    createUser,
+    readUserById,
+    readUserByName,
+    updateUserById,
+    updateUserByName,
+    deleteUserById,
+    deleteUserByName
+};

@@ -22,3 +22,10 @@ const deleteMessage = async (id) => {
     if (!message) return null;
     return await message.deleteOne();
 }
+
+export {
+    createMessage,
+    readMessage,
+    updateMessage,
+    deleteMessage
+};

@@ -22,3 +22,10 @@ const deleteChat = async (id) => {
     if (!chat) return null;
     return await chat.deleteOne();
 }
+
+export {
+    createChat,
+    readChat,
+    updateChat,
+    deleteChat
+};
