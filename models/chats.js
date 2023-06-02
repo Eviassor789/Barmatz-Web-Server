@@ -14,7 +14,7 @@ const Chat = new Schema({
     user2: {
         type: String,
         required: true
-    },
+    }
 });
 
 module.exports = mongoose.model('Chat', Chat);
