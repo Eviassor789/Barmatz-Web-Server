@@ -7,11 +7,11 @@ const Chat = new Schema({
         type: [mongoose.Schema.Types.ObjectId],
         default: []
     },
-    sender: {
+    user1: {
         type: String,
         required: true
     },
-    reciever: {
+    user2: {
         type: String,
         required: true
     },
