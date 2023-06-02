@@ -3,6 +3,9 @@ import { validateTokenParams } from "../services/tokens.js";
 
 const key = "Never gonna give you up";
 
+
+
+
 const isLoggedIn = (req, res, next) => {
   // If the request has an authorization header
   if (req.headers.authorization) {
@@ -20,14 +23,14 @@ const isLoggedIn = (req, res, next) => {
 
 const getToken = (req, res) => {
   // Check credentials
-  console.log(req.body);
-  console.log(req.body);
+  console.log(req.body.username);
+  console.log(req.body.password);
   
 
   if (validateTokenParams(req.body.username, req.body.password)) {
     const data = { username: req.body.username };
     const token = jwt.sign(data, key);
-    res.status(200).json({ token });
+    res.status(200).send( token );
   } else res.status(404).send("Incorrect username and/or password");// NOTICE THE SEND
 };
 
