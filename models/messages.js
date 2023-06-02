@@ -14,9 +14,6 @@ const Message = new Schema({
     created: {
         type: Date,
         default: Date.now
-    },
-    _id: {
-        type: Number
     }
 });
 

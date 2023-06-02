@@ -1,4 +1,23 @@
+import mongoose from "mongoose";
 
+const Schema = mongoose.Schema;
+
+const Chat = new Schema({
+    messagesList: {
+        type: [mongoose.Schema.Types.ObjectId],
+        default: []
+    },
+    sender: {
+        type: String,
+        required: true
+    },
+    reciever: {
+        type: String,
+        required: true
+    },
+});
+
+module.exports = mongoose.model('Chat', Chat);
 
 function getChatsByUserName(username){
     var response = [];
