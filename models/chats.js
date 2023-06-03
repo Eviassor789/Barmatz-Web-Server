@@ -25,21 +25,21 @@ const ChatSchema = new Schema({
 
 const Chat = mongoose.model('Chat', ChatSchema);
 
-function getChatsByUserName(username){
+const getChatsByUserName = async(username) => {
     var response = [];
-    var chatsIdList = getChatsListOfUserByUsername(username);
+    var chatsIdList = await getChatsListOfUserByUsername(username);
 
 
     if (chatsIdList.length == 0){
         return response;
     }
-    chatsIdList.forEach(element => {
-        var user_one = getUser1(element);
-        var user_two = getUser2(element);
+    chatsIdList.forEach(async(element) => {
+        var user_one = await getUser1(element);
+        var user_two = await getUser2(element);
         var chat_json = {"id": "", "user": {}, "lastMessage": {}};
         chat_json.id = element;
-        chat_json.user = user_one == username ? getUserDetailsByUsername(user_two) : getUserDetailsByUsername(user_one);
-        chat_json.lastMessage = getLastMsgByChatId(element);
+        chat_json.user = user_one == username ? await getUserDetailsByUsername(user_two) : await getUserDetailsByUsername(user_one);
+        chat_json.lastMessage = await getLastMsgByChatId(element);
 
         response.push(chat_json)
     });
@@ -63,8 +63,8 @@ function getChatsByUserName(username){
 
 }
 
-function getLastMsgByChatId(chatId){
-    var messagesList = readChat(chatId).messagesList;
+const getLastMsgByChatId = async(chatId) => {
+    var messagesList = await readChat(chatId).messagesList;
     return messagesList[messagesList.length - 1];
     
     //get message json (the last table in the pdf) of the chat Id. looks like this
@@ -75,11 +75,11 @@ function getLastMsgByChatId(chatId){
     // }
 }
 
-function getUserDetailsByUsername(username){
+const getUserDetailsByUsername = async(username) => {
     var userDetails_json = {"username": "", "displayName": "", "profilePic": ""};
     userDetails_json.username = username;
-    userDetails_json.displayName = getDisplasyNameUserByUsername(username);
-    userDetails_json.profilePic = getProfilePicOfUserByUsername(username);
+    userDetails_json.displayName = await getDisplasyNameUserByUsername(username);
+    userDetails_json.profilePic = await getProfilePicOfUserByUsername(username);
     return userDetails_json;
 
     //get user details: username, profile and displayName (no password) of a user, looks like this
@@ -90,18 +90,18 @@ function getUserDetailsByUsername(username){
     // }
 }
 
-function addChat(username, friendUserName) {
-    var chat = createChat(username, friendUserName);
-    var chatsList1 = getChatsListOfUserByUsername(username)
+const addChat = async(username, friendUserName) => {
+    var chat = await createChat(username, friendUserName);
+    var chatsList1 = await getChatsListOfUserByUsername(username)
     chatsList1.push(chat._id);
-    updateChatsListOfUserByName(username, chatsList1);
-    var chatsList2 = getChatsListOfUserByUsername(friendUserName)
+    await updateChatsListOfUserByName(username, chatsList1);
+    var chatsList2 = await getChatsListOfUserByUsername(friendUserName)
     chatsList2.push(chat._id);
-    updateChatsListOfUserByName(username, chatsList2);
+    await updateChatsListOfUserByName(username, chatsList2);
 
     var response_json = {"id": "", "user": {}};
     response_json.id = chat._id;
-    response_json.user = getUserDetailsByUsername(username); //SHOULD IT BE friendUserName ??? ////////////////////////////////////////////
+    response_json.user = await getUserDetailsByUsername(username); //SHOULD IT BE friendUserName ??? ////////////////////////////////////////////
     return response.json;
 
 //add the chat to the chat table and add the chat to the chatlist of each user.
@@ -119,14 +119,14 @@ function addChat(username, friendUserName) {
 }
 
 
-function getMessageDetailsById(id){
-    var sender = readMessage(id).sender;
+const getMessageDetailsById = async(id) => {
+    var sender = await readMessage(id).sender;
     answer_json = {"id": "", "created":"", "sender": {}, "content": ""}
 
     answer_json.id = id;
-    answer_json.created = readMessage(id).created;
-    answer_json.sender = getUserDetailsByUsername(sender);
-    answer_json.content = readMessage(id).content;
+    answer_json.created = await readMessage(id).created;
+    answer_json.sender = await getUserDetailsByUsername(sender);
+    answer_json.content = await readMessage(id).content;
 
     return answer_json;
 
@@ -143,32 +143,32 @@ function getMessageDetailsById(id){
 }
 
 
-function isMember(username, chatId){
-    var chatsIdList = getChatsListOfUserByUsername(username);
+const isMember = async(username, chatId) => {
+    var chatsIdList = await getChatsListOfUserByUsername(username);
     return chatsIdList.includes(chatId);  // if the user asks for a chat he is not a member of - return false.
 
 }
 
 
 
-function getAllChatDataByChatId(username, chatId){
+const getAllChatDataByChatId = async(username, chatId) => {
 
-    if (!isMember(username, chatId)){// if the user asks for a chat he is not a member of - return "".
+    if (!await isMember(username, chatId)){// if the user asks for a chat he is not a member of - return "".
         return "";
     };
-    var messageIdList = getMessagesList(chatId);
-    var user_one = getUser1(chatId);
-    var user_two = getUser2(chatId);
+    var messageIdList = await getMessagesList(chatId);
+    var user_one = await getUser1(chatId);
+    var user_two = await getUser2(chatId);
 
     var chat_json = {"id": "", "users": [], "messages": []};
 
     chat_json.id = chatId;
 
-    chatId.users.push(getUserDetailsByUsername(user_one));
-    chatId.users.push(getUserDetailsByUsername(user_two));
+    chatId.users.push(await getUserDetailsByUsername(user_one));
+    chatId.users.push(await getUserDetailsByUsername(user_two));
 
-    messageIdList.forEach(element => {
-        chat_json.messages.push(getMessageDetailsById(element))
+    messageIdList.forEach(async(element) => {
+        chat_json.messages.push(await getMessageDetailsById(element))
     });
 
 
