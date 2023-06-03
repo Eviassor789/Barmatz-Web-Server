@@ -8,7 +8,7 @@ import routesTokens from'./routes/tokens.js';
 import routesUsers from './routes/users.js';
 
 customEnv.env(process.env.NODE_ENV, './config')
-mongoose.connect(proccess.env.CONNECTION_STRING, {
+mongoose.connect(process.env.CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
