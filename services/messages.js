@@ -1,4 +1,4 @@
-import Message from "../models/messages.js";
+import {Message} from "../models/messages.js";
 
 const createMessage = async (content, sender, created) => {
     const message = new Message({content, sender});

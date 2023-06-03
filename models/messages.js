@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const Message = new Schema({
+const MessageModel = new Schema({
     _id: {
         type: Number,
     },
@@ -20,4 +20,8 @@ const Message = new Schema({
     }
 });
 
-module.exports = mongoose.model('Message', Message);
+const Message = mongoose.model('Message', MessageModel);
+
+export{
+    Message
+}

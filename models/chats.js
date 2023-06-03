@@ -5,7 +5,7 @@ import { readMessage } from "../services/messages.js";
 
 const Schema = mongoose.Schema;
 
-const Chat = new Schema({
+const ChatSchema = new Schema({
     _id: {
         type: Number,
     },
@@ -23,7 +23,7 @@ const Chat = new Schema({
     }
 });
 
-module.exports = mongoose.model('Chat', Chat);
+const Chat = mongoose.model('Chat', ChatSchema);
 
 function getChatsByUserName(username){
     var response = [];
@@ -222,5 +222,6 @@ export {
     addChat,
     getAllChatDataByChatId,
     isMember,
+    Chat
   };
   

@@ -3,7 +3,7 @@ import { createUser, readUserByName } from "../services/users.js";
 
 const Schema = mongoose.Schema;
 
-const User = new Schema({
+const UserSchema = new Schema({
     chatsList: {
         type: [Number],
         default: []
@@ -26,7 +26,7 @@ const User = new Schema({
     }
 });
 
-module.exports = mongoose.model('User', User);
+const User = mongoose.model('User', UserSchema);
 
 const addUser = async (username, password, displayName, profilePic) => {
     const doesExistAlready = await readUserByName(username);
@@ -35,5 +35,6 @@ const addUser = async (username, password, displayName, profilePic) => {
 } 
 
 export {
-    addUser
+    addUser,
+    User
 }

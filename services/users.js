@@ -1,4 +1,4 @@
-import User from "../models/users.js";
+import {User} from "../models/users.js";
 
 const createUser = async (chatsList, profilePic, displayName, password, username) => {
     const user = new User({profilePic, displayName, password, username});
