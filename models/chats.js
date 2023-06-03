@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { getChatsListOfUserByUsername} from "../services/users.js";
-import { getUser1, getUser2} from "../services/chats.js";
+import { getChatsListOfUserByUsername, getProfilePicOfUserByUsername, getDisplasyNameUserByUsername} from "../services/users.js";
+import { getUser1, getUser2, readChat} from "../services/chats.js";
 
 const Schema = mongoose.Schema;
 
@@ -63,6 +63,9 @@ function getChatsByUserName(username){
 }
 
 function getLastMsgByChatId(chatId){
+    var messagesList = readChat(chatId).messagesList;
+    return messagesList[messagesList.length - 1];
+    
     //get message json (the last table in the pdf) of the chat Id. looks like this
     // {
     //   "id": 1,
@@ -72,6 +75,12 @@ function getLastMsgByChatId(chatId){
 }
 
 function getUserDetailsByUsername(username){
+    var userDetails_json = {"username": "", "displayName": "", "profilePic": ""};
+    userDetails_json.username = username;
+    userDetails_json.displayName = getDisplasyNameUserByUsername(username);
+    userDetails_json.profilePic = getProfilePicOfUserByUsername(username);
+    return userDetails_json;
+
     //get user details: username, profile and displayName (no password) of a user, looks like this
     // {
     //     "username": "name",
@@ -81,6 +90,7 @@ function getUserDetailsByUsername(username){
 }
 
 function addChat(username, friendUserName) {
+
 //add the chat to the chat table and add the chat to the chatlist of each user.
 
 //return json like this:

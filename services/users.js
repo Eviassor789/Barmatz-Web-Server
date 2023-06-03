@@ -10,21 +10,6 @@ const readUserByName = async (username) => {
     return await User.findOne({username});
 }
 
-const updateChatsListOfUserByName = async (username, chatsList) => {
-    const user = await readUserByName(username);
-    if (!user) return null;
-    user.chatsList = chatsList;
-    return await user.save();
-}
-
-const deleteUserByName = async (username) => {
-    const user = await readUserByName(username);
-    if (!user) return null;
-    return await user.deleteOne();
-}
-
-//CRUD
-
 const getChatsListOfUserByUsername = async (username) => {
     const user = await readUserByName(username);
     if (!user) return null;
@@ -42,6 +27,21 @@ const getDisplasyNameUserByUsername = async (username) => {
     if (!user) return null;
     return await user.displayName;
 }
+
+const updateChatsListOfUserByName = async (username, chatsList) => {
+    const user = await readUserByName(username);
+    if (!user) return null;
+    user.chatsList = chatsList;
+    return await user.save();
+}
+
+const deleteUserByName = async (username) => {
+    const user = await readUserByName(username);
+    if (!user) return null;
+    return await user.deleteOne();
+}
+
+//CRUD
 
 export {
     createUser,

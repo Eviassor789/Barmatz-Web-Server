@@ -10,21 +10,6 @@ const readChat = async (id) => {
     return await Chat.findById(id);
 }
 
-const updateMessagesListOfChat = async (id, messagesList) => {
-    const chat = await readChat(id);
-    if (!message) return null;
-    chat.messagesList = messagesList;
-    return await chat.save();
-}
-
-const deleteChat = async (id) => {
-    const chat = await readChat(id);
-    if (!chat) return null;
-    return await chat.deleteOne();
-}
-
-//CRUD
-
 const getUser1 = async (id) => {
     const chat = await readChat(id);
     if (!message) return null;
@@ -42,6 +27,21 @@ const getMessagesList = async (id) => {
     if (!message) return null;
     return chat.messagesList;
 }
+
+const updateMessagesListOfChat = async (id, messagesList) => {
+    const chat = await readChat(id);
+    if (!message) return null;
+    chat.messagesList = messagesList;
+    return await chat.save();
+}
+
+const deleteChat = async (id) => {
+    const chat = await readChat(id);
+    if (!chat) return null;
+    return await chat.deleteOne();
+}
+
+//CRUD
 
 export {
     createChat,
