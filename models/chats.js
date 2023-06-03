@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { getChatsListOfUserByUsername, getProfilePicOfUserByUsername, getDisplasyNameUserByUsername} from "../services/users.js";
-import { getUser1, getUser2, readChat} from "../services/chats.js";
+import { createChat, getMessagesList, getUser1, getUser2, readChat} from "../services/chats.js";
+import { readMessage } from "../services/messages.js";
 
 const Schema = mongoose.Schema;
 
@@ -90,6 +91,18 @@ function getUserDetailsByUsername(username){
 }
 
 function addChat(username, friendUserName) {
+    var chat = createChat(username, friendUserName);
+    var chatsList1 = getChatsListOfUserByUsername(username)
+    chatsList1.push(chat._id);
+    updateChatsListOfUserByName(username, chatsList1);
+    var chatsList2 = getChatsListOfUserByUsername(friendUserName)
+    chatsList2.push(chat._id);
+    updateChatsListOfUserByName(username, chatsList2);
+
+    var response_json = {"id": "", "user": {}};
+    response_json.id = chat._id;
+    response_json.user = getUserDetailsByUsername(username); //SHOULD IT BE friendUserName ??? ////////////////////////////////////////////
+    return response.json;
 
 //add the chat to the chat table and add the chat to the chatlist of each user.
 
@@ -107,13 +120,13 @@ function addChat(username, friendUserName) {
 
 
 function getMessageDetailsById(id){
-    var sender = "" //GET SENDER NAME
+    var sender = readMessage(id).sender;
     answer_json = {"id": "", "created":"", "sender": {}, "content": ""}
 
     answer_json.id = id;
-    answer_json.created = ""; // TO DO DataBase GET
+    answer_json.created = readMessage(id).created;
     answer_json.sender = getUserDetailsByUsername(sender);
-    answer_json.content = "";//GET CONTENT
+    answer_json.content = readMessage(id).content;
 
     return answer_json;
 
@@ -131,7 +144,7 @@ function getMessageDetailsById(id){
 
 
 function isMember(username, chatId){
-    var chatsIdList = [] ;//return here the chats Id list array of the username from DB
+    var chatsIdList = getChatsListOfUserByUsername(username);
     return chatsIdList.includes(chatId);  // if the user asks for a chat he is not a member of - return false.
 
 }
@@ -143,9 +156,9 @@ function getAllChatDataByChatId(username, chatId){
     if (!isMember(username, chatId)){// if the user asks for a chat he is not a member of - return "".
         return "";
     };
-    var messageIdList = []//return here the message Id list array of the chatId from DB
-    var user_one = ""; //return here the names of the chat members by chat id from DB
-    var user_two = ""; //return here the names of the chat members by chat id from DB
+    var messageIdList = getMessagesList(chatId);
+    var user_one = getUser1(chatId);
+    var user_two = getUser2(chatId);
 
     var chat_json = {"id": "", "users": [], "messages": []};
 
