@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { createUser, readUserByName } from "../services/users";
+import { createUser, readUserByName } from "../services/users.js";
 
 const Schema = mongoose.Schema;
 

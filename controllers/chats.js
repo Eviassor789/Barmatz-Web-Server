@@ -1,4 +1,4 @@
-import { getChatsByUserName, addChat, getAllChatDataByChatId, isMember } from "../models/chats";
+import { getChatsByUserName, addChat, getAllChatDataByChatId, isMember } from "../models/chats.js";
 
 import jwt from "jsonwebtoken";
 const key = "Never gonna give you up";

@@ -1,5 +1,5 @@
-import { getUserDetailsByUsername } from "../models/chats";
-import { addUser } from "../models/users";
+import { getUserDetailsByUsername } from "../models/chats.js";
+import { addUser } from "../models/users.js";
 
 function getUserDetails(req, res) {
   try {
