@@ -4,6 +4,9 @@ import { getChatsListOfUserByUsername} from "../services/users.js";
 const Schema = mongoose.Schema;
 
 const Chat = new Schema({
+    _id: {
+        type: Number,
+    },
     messagesList: {
         type: [mongoose.Schema.Types.ObjectId],
         default: []
