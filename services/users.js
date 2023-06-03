@@ -1,6 +1,6 @@
 import {User} from "../models/users.js";
 
-const createUser = async (chatsList, profilePic, displayName, password, username) => {
+const createUser = async (profilePic, displayName, password, username, chatsList, ) => {
     const user = new User({profilePic, displayName, password, username});
     if (chatsList) user.chatsList = chatsList;
     return await user.save();

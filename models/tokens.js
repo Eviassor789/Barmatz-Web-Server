@@ -1,8 +1,8 @@
 import { readUserByName } from "../services/users.js";
 
 
-function hasUser(name, password) {
-    user = readUserByName(name);
+const hasUser = async (name, password) => {
+    var user = await readUserByName(name);
     if (!user) return false;
     if (user.password != password) return false;
     

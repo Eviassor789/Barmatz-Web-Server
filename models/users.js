@@ -4,10 +4,6 @@ import { createUser, readUserByName } from "../services/users.js";
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    chatsList: {
-        type: [Number],
-        default: []
-    },
     profilePic: {
         type: String,
         required: true
@@ -23,15 +19,19 @@ const UserSchema = new Schema({
     username: {
         type: String,
         required: true
-    }
+    },
+    chatsList: {
+        type: [Number],
+        default: []
+    },
 });
 
 const User = mongoose.model('User', UserSchema);
 
-const addUser = async (username, password, displayName, profilePic) => {
+const addUser = async (profilePic, displayName, password, username) => {
     const doesExistAlready = await readUserByName(username);
     if (doesExistAlready) return null;
-    return createUser(username, password, displayName, profilePic);
+    return createUser(profilePic, displayName, password, username);
 } 
 
 export {

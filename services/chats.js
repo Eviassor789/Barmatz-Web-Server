@@ -1,6 +1,6 @@
 import {Chat} from "../models/chats.js";
 
-const createChat = async (messagesList, user1, user2) => {
+const createChat = async (user1, user2, messagesList) => {
     const chat = new Chat({user1, user2});
     if (messagesList) chat.messagesList = messagesList;
     return await chat.save();

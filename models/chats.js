@@ -30,7 +30,7 @@ function getChatsByUserName(username){
     var chatsIdList = getChatsListOfUserByUsername(username);
 
 
-    if (chatsIdList.length() == 0){
+    if (chatsIdList.length == 0){
         return response;
     }
     chatsIdList.forEach(element => {
