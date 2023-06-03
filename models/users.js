@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const User = new Schema({
     chatsList: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Number],
         default: []
     },
     profilePic: {

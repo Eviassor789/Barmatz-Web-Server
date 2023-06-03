@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { getChatsListOfUserByUsername} from "../services/users.js";
+import { getUser1, getUser2} from "../services/chats.js";
 
 const Schema = mongoose.Schema;
 
@@ -8,7 +9,7 @@ const Chat = new Schema({
         type: Number,
     },
     messagesList: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Number],
         default: []
     },
     user1: {
@@ -32,8 +33,8 @@ function getChatsByUserName(username){
         return response;
     }
     chatsIdList.forEach(element => {
-        var user_one = ""; //return here the names of the chat members by the elemnt which is a chat id
-        var user_two = ""; //return here the names of the chat members by the elemnt which is a chat id
+        var user_one = getUser1(element);
+        var user_two = getUser2(element);
         var chat_json = {"id": "", "user": {}, "lastMessage": {}};
         chat_json.id = element;
         chat_json.user = user_one == username ? getUserDetailsByUsername(user_two) : getUserDetailsByUsername(user_one);

@@ -10,7 +10,7 @@ const readMessage = async (id) => {
     return await Message.findById(id);
 }
 
-const updateMessage = async (id, content) => {
+const updateContentOfMessage = async (id, content) => {
     const message = await readMessage(id);
     if (!message) return null;
     message.content = content;
@@ -28,6 +28,6 @@ const deleteMessage = async (id) => {
 export {
     createMessage,
     readMessage,
-    updateMessage,
+    updateContentOfMessage,
     deleteMessage
 };

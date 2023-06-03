@@ -6,32 +6,15 @@ const createUser = async (chatsList, profilePic, displayName, password, username
     return await user.save();
 }
 
-const readUserById = async (id) => {
-    return await User.findById(id);
-}
-
 const readUserByName = async (username) => {
     return await User.findOne({username});
 }
 
-const updateUserById = async (id, chatsList) => {
-    const user = await readUserById(id);
-    if (!user) return null;
-    user.chatsList = chatsList;
-    return await user.save();
-}
-
-const updateUserByName = async (username, chatsList) => {
+const updateChatsListOfUserByName = async (username, chatsList) => {
     const user = await readUserByName(username);
     if (!user) return null;
     user.chatsList = chatsList;
     return await user.save();
-}
-
-const deleteUserById = async (id) => {
-    const user = await readUserById(id);
-    if (!user) return null;
-    return await user.deleteOne();
 }
 
 const deleteUserByName = async (username) => {
@@ -45,16 +28,27 @@ const deleteUserByName = async (username) => {
 const getChatsListOfUserByUsername = async (username) => {
     const user = await readUserByName(username);
     if (!user) return null;
-    return await user.deleteOne();
+    return await user.chatsList;
+}
+
+const getProfilePicOfUserByUsername = async (username) => {
+    const user = await readUserByName(username);
+    if (!user) return null;
+    return await user.profilePic;
+}
+
+const getDisplasyNameUserByUsername = async (username) => {
+    const user = await readUserByName(username);
+    if (!user) return null;
+    return await user.displayName;
 }
 
 export {
     createUser,
-    readUserById,
     readUserByName,
-    updateUserById,
-    updateUserByName,
-    deleteUserById,
+    updateChatsListOfUserByName,
     deleteUserByName,
-    getChatsListOfUserByUsername
+    getChatsListOfUserByUsername,
+    getProfilePicOfUserByUsername,
+    getDisplasyNameUserByUsername
 };
