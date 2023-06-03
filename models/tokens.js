@@ -1,4 +1,4 @@
-import { readUserByName } from "../services/users";
+import { readUserByName } from "../services/users.js";
 
 
 function hasUser(name, password) {
