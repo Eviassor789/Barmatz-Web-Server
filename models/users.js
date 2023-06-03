@@ -31,7 +31,7 @@ const User = mongoose.model('User', UserSchema);
 const addUser = async (profilePic, displayName, password, username) => {
     const doesExistAlready = await readUserByName(username);
     if (doesExistAlready) return null;
-    return createUser(profilePic, displayName, password, username);
+    return await createUser(profilePic, displayName, password, username);
 } 
 
 export {
