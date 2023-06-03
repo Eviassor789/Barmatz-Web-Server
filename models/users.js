@@ -8,7 +8,7 @@ const User = new Schema({
         default: []
     },
     profilePic: {
-        type: String, // is that the right type of the image?
+        type: String, // is that the right type of the image? if not, need to change some functions too
         required: true
     },
     displayName: {

@@ -23,6 +23,8 @@ const deleteMessage = async (id) => {
     return await message.deleteOne();
 }
 
+//CRUD
+
 export {
     createMessage,
     readMessage,

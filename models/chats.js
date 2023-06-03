@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { getChatsListOfUserByUsername} from "../services/users.js";
 
 const Schema = mongoose.Schema;
 
@@ -21,7 +22,7 @@ module.exports = mongoose.model('Chat', Chat);
 
 function getChatsByUserName(username){
     var response = [];
-    var chatsIdList = []//return here the chats Id list array of the username
+    var chatsIdList = getChatsListOfUserByUsername(username);
 
 
     if (chatsIdList.length() == 0){

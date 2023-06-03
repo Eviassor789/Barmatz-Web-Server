@@ -23,6 +23,8 @@ const deleteChat = async (id) => {
     return await chat.deleteOne();
 }
 
+//CRUD
+
 export {
     createChat,
     readChat,

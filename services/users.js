@@ -29,13 +29,21 @@ const updateUserByName = async (username, chatsList) => {
 }
 
 const deleteUserById = async (id) => {
-    const user = await readChatById(id);
+    const user = await readUserById(id);
     if (!user) return null;
     return await user.deleteOne();
 }
 
 const deleteUserByName = async (username) => {
-    const user = await readChatByName(username);
+    const user = await readUserByName(username);
+    if (!user) return null;
+    return await user.deleteOne();
+}
+
+//CRUD
+
+const getChatsListOfUserByUsername = async (username) => {
+    const user = await readUserByName(username);
     if (!user) return null;
     return await user.deleteOne();
 }
@@ -47,5 +55,6 @@ export {
     updateUserById,
     updateUserByName,
     deleteUserById,
-    deleteUserByName
+    deleteUserByName,
+    getChatsListOfUserByUsername
 };
