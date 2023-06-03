@@ -13,19 +13,19 @@ const readUserByName = async (username) => {
 const getChatsListOfUserByUsername = async (username) => {
     const user = await readUserByName(username);
     if (!user) return null;
-    return await user.chatsList;
+    return user.chatsList;
 }
 
 const getProfilePicOfUserByUsername = async (username) => {
     const user = await readUserByName(username);
     if (!user) return null;
-    return await user.profilePic;
+    return user.profilePic;
 }
 
 const getDisplasyNameUserByUsername = async (username) => {
     const user = await readUserByName(username);
     if (!user) return null;
-    return await user.displayName;
+    return user.displayName;
 }
 
 const updateChatsListOfUserByName = async (username, chatsList) => {
