@@ -10,7 +10,8 @@ import routesUsers from './routes/users.js';
 customEnv.env(process.env.NODE_ENV, './config')
 mongoose.connect(process.env.CONNECTION_STRING, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    family: 4 //Dont know why but without it I get an error and it crashes ////////////////////////////////////////////////////////////
 });
 
 const app = express();
