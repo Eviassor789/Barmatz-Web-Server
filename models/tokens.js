@@ -1,11 +1,12 @@
+import { readUserByName } from "../services/users";
 
 
 function hasUser(name, password) {
-//if "name" dont exist. OR the password incorrect - return False
-// else - return True
-return true;
-
-
+    user = readUserByName(name);
+    if (!user) return false;
+    if (user.password != password) return false;
+    
+    return true;
 }
 
 export {
