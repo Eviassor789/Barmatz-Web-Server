@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { createUser, readUserByName } from "../services/users";
 
 const Schema = mongoose.Schema;
 
@@ -26,3 +27,13 @@ const User = new Schema({
 });
 
 module.exports = mongoose.model('User', User);
+
+const addUser = async (username, password, displayName, profilePic) => {
+    const doesExistAlready = await readUserByName(username);
+    if (doesExistAlready) return null;
+    return createUser(username, password, displayName, profilePic);
+} 
+
+export {
+    addUser
+}
