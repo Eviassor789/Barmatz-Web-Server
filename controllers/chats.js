@@ -4,18 +4,20 @@ import {
   getAllChatDataByChatId,
   isMember,
   deleteChatById,
+  readChat,
+  addMsgByChatId,
+  getAllMsgByChatId,
 } from "../services/chats.js";
-import { addMsgByChatId } from "../services/chats.js";
 
 import jwt from "jsonwebtoken";
 const key = "Never gonna give you up";
 
-function getAllChats(req, res) {
+async function getAllChats(req, res) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const data = jwt.verify(token, key);
     const username = data.username;
-    var chats_list = getChatsByUserName(username);
+    var chats_list = await getChatsByUserName(username);
     return res.status(200).send(chats_list);
   } catch (error) {
     res.status(500).send("error occuered");
@@ -28,6 +30,11 @@ async function addNewChat(req, res) {
     const data = jwt.verify(token, key);
     const username = data.username;
     const friendUserName = req.body.username;
+
+    if (username == null || friendUserName == null) {
+      return res.status(400).send("Bad request");
+    }
+
     if (username == friendUserName) {
       return res.status(400).send("Thou shalt not talk with thy self");
     }
@@ -43,12 +50,17 @@ async function addNewChat(req, res) {
   }
 }
 
-function getChatDetails(req, res) {
+async function getChatDetails(req, res) {
   const token = req.headers.authorization.split(" ")[1];
   const data = jwt.verify(token, key);
   const username = data.username;
   const chatId = req.params.id;
-  var answer_json = getAllChatDataByChatId(username, chatId);
+
+  if (username == null || chatId == null) {
+    return res.status(400).send("Bad request");
+  }
+
+  var answer_json = await getAllChatDataByChatId(username, chatId);
   if (answer_json == "") {
     return res.status(401).json({
       type: "https://tools.ietf.org/html/rfc7235#section-3.1",
@@ -60,13 +72,17 @@ function getChatDetails(req, res) {
   return res.status(200).send(answer_json);
 }
 
-function deleteChat(req, res) {
+async function deleteChat(req, res) {
   const token = req.headers.authorization.split(" ")[1];
   const data = jwt.verify(token, key);
   const username = data.username;
   const chatId = req.params.id;
 
-  if (!isMember(username, chatId)) {
+  if (username == null || chatId == null) {
+    return res.status(400).send("Bad request");
+  }
+
+  if (!(await isMember(username, chatId))) {
     return res.status(401).json({
       type: "https://tools.ietf.org/html/rfc7235#section-3.1",
       title: "Unauthorized",
@@ -74,7 +90,7 @@ function deleteChat(req, res) {
       traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
     });
   }
-  deleteChatById(chatId);
+  await deleteChatById(chatId);
 
   return res.status(200).send("chat deleted succesfully");
 }
@@ -85,6 +101,10 @@ async function sendMessage(req, res) {
   const username = data.username;
   const chatId = req.params.id;
   const content = req.body.msg;
+
+  if (content == null || chatId == null) {
+    return res.status(400).send("Bad request");
+  }
 
   if (!(await isMember(username, chatId))) {
     return res.status(401).json({
@@ -102,13 +122,33 @@ async function sendMessage(req, res) {
   return res.status(500).send("error occuered on sending msg");
 }
 
-function getChatMesaages(req, res) {
+async function getChatMesaages(req, res) {
   const token = req.headers.authorization.split(" ")[1];
   const data = jwt.verify(token, key);
   const username = data.username;
   const chatId = req.params.id;
 
-  return res.json();
+  try {
+    if (!(await isMember(username, chatId))) {
+      return res.status(401).json({
+        type: "https://tools.ietf.org/html/rfc7235#section-3.1",
+        title: "Unauthorized",
+        status: 401,
+        traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
+      });
+    }
+
+    var answer = await getAllMsgByChatId(username, chatId);
+
+    return res.status(200).send(answer);
+  } catch (error) {
+    return res.status(401).json({
+      type: "https://tools.ietf.org/html/rfc7235#section-3.1",
+      title: "Unauthorized",
+      status: 401,
+      traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
+    });
+  }
 }
 
 export {
