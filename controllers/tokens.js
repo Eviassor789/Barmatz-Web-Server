@@ -6,7 +6,7 @@ const key = "Never gonna give you up";
 
 
 
-const isLoggedIn = (req, res, next) => {
+const isLoggedIn =  (req, res, next) => {
   // If the request has an authorization header
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
@@ -21,17 +21,22 @@ const isLoggedIn = (req, res, next) => {
   } else return res.status(401).send("Token required");// NOTICE THE SEND
 };
 
-const getToken = (req, res) => {
+const getToken = async (req, res) => {
   // Check credentials
   console.log(req.body.username);
   console.log(req.body.password);
   
+  try{
 
-  if (validateTokenParams(req.body.username, req.body.password)) {
+  if (await validateTokenParams(req.body.username, req.body.password)) {
     const data = { username: req.body.username };
     const token = jwt.sign(data, key);
     res.status(200).send( token );
   } else res.status(404).send("Incorrect username and/or password");// NOTICE THE SEND
+} catch(error) {
+  res.status(500).send("wrong parameters");
+}
+
 };
 
 export { isLoggedIn, getToken };

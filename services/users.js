@@ -1,10 +1,17 @@
 import {User} from "../models/users.js";
 
-const createUser = async (profilePic, displayName, password, username, chatsList, ) => {
+const addUser = async (profilePic, displayName, password, username) => {
+    const doesExistAlready = await readUserByName(username);
+    if (doesExistAlready) return null;
+    return await createUser(profilePic, displayName, password, username);
+} 
+
+const createUser = async (profilePic, displayName, password, username) => {
     const user = new User({profilePic, displayName, password, username});
-    if (chatsList) user.chatsList = chatsList;
+    user.chatsList = [];
     return await user.save();
 }
+
 
 const readUserByName = async (username) => {
     return await User.findOne({username});
@@ -50,5 +57,6 @@ export {
     deleteUserByName,
     getChatsListOfUserByUsername,
     getProfilePicOfUserByUsername,
-    getDisplasyNameUserByUsername
+    getDisplasyNameUserByUsername,
+    addUser
 };

@@ -18,7 +18,9 @@ const UserSchema = new Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true,  // Set the field as unique
+        index: true    // Create an index for efficient querying
     },
     chatsList: {
         type: [Number],
@@ -28,13 +30,8 @@ const UserSchema = new Schema({
 
 const User = mongoose.model('User', UserSchema);
 
-const addUser = async (profilePic, displayName, password, username) => {
-    const doesExistAlready = await readUserByName(username);
-    if (doesExistAlready) return null;
-    return await createUser(profilePic, displayName, password, username);
-} 
+
 
 export {
-    addUser,
     User
 }
