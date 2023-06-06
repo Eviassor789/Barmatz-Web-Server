@@ -14,6 +14,7 @@ import {
   increaseHighestIdMsg,
 } from "../app.js";
 import { Message } from "../models/messages.js";
+import { validatorErrorSymbol } from "mongoose/lib/helpers/symbols.js";
 
 const createChat = async (user1, user2) => {
   var chatId = getHighestIdChats() + 1;
@@ -60,16 +61,20 @@ const deleteChatById = async (id) => {
 
   var user_one_name = await getUser1(id);
   var user_one = await readUserByName(user_one_name);
-  
-  var list = user_one.chatsList; 
-  var newList = await list.filter((item) => {item !== id});
+
+  var list = user_one.chatsList;
+  var newList = await list.filter((item) => {
+    item !== id;
+  });
   // newList.filter
   user_one.chatsList = newList;
   await user_one.save();
 
   var user_two_name = await getUser2(id);
   var user_two = await readUserByName(user_two_name);
-  user_two.chatsList = user_two.chatsList.filter((item) => {item !== id});
+  user_two.chatsList = user_two.chatsList.filter((item) => {
+    item !== id;
+  });
   await user_two.save();
 
   var msgList = chat.messagesList;
@@ -125,6 +130,9 @@ const getChatsByUserName = async (username) => {
 
 const getLastMsgByChatId = async (chatId) => {
   var messagesList = await readChat(chatId).messagesList;
+  if (messagesList.length == 0) {
+    return null;
+  }
 
   var last_msg = await readMessage(messagesList[messagesList.length - 1]);
 
@@ -215,8 +223,7 @@ const getMessageDetailsById = async (id) => {
 const isMember = async (username, chatId) => {
   var chatsIdList = await getChatsListOfUserByUsername(username);
   var d = await chatsIdList.includes(chatId);
-  console.log("d " + d);
-  return d;  // if the user asks for a chat he is not a member of - return false.
+  return d; // if the user asks for a chat he is not a member of - return false.
 };
 
 const getAllChatDataByChatId = async (username, chatId) => {
@@ -271,21 +278,10 @@ const getAllChatDataByChatId = async (username, chatId) => {
   // }
 };
 
-// const createChat = async (user1, user2) => {
-//   var chatId = getHighestIdChats() + 1;
-//   increaseHighestIdChats();
-
-//   const chat = new Chat({ chatId: chatId, user1, user2 });
-//   chat.messagesList = [];
-
-//   return await chat.save();
-// };
-
 const addMsgByChatId = async (username, chatId, content) => {
   var msgId = getHighestIdMsg() + 1;
   increaseHighestIdMsg();
   var sender_Json = await getUserDetailsByUsername(username);
-  console.log("sender_Json " + sender_Json);
 
   try {
     const message = new Message({ MsgId: msgId, content, sender: sender_Json });
@@ -309,7 +305,40 @@ const addMsgByChatId = async (username, chatId, content) => {
   }
 };
 
-// FROM MODEL: END
+const getAllMsgByChatId = async (username, chatId) => {
+  var answer = [];
+  var chat = await readChat(chatId);
+  var msgList = chat.messagesList;
+  var msgJson;
+
+
+  await Promise.all(msgList.map(async (msg) => {
+      var message = await readMessage(msg);
+
+      msgJson = {
+        id: msg,
+        created: message.created,
+        sender: { username: message.sender.username },
+        content: message.content,
+      };
+      answer.push(msgJson);
+    }));
+      return answer;
+  };
+
+ 
+
+  // [
+  //   {
+  //     "id": 1,
+  //     "created": "2023-06-01T16:38:46.0270481",
+  //     "sender": {
+  //       "username": "aa"
+  //     },
+  //     "content": "aaaaa"
+  //   }
+  // ]
+
 
 export {
   createChat,
@@ -325,4 +354,5 @@ export {
   getAllChatDataByChatId,
   isMember,
   addMsgByChatId,
+  getAllMsgByChatId,
 };

@@ -56,7 +56,6 @@ var highestIdMsg;
       highestIdChats = 0;
     }
   }).catch((err) => {
-    console.log('error 001');
   });
 
   await User.findOne().sort('-userId').then((user) => {
@@ -69,7 +68,6 @@ var highestIdMsg;
       highestIdUsers = 0;
     }
   }).catch((err) => {
-    console.log('error 001');
   });
 
   await Message.findOne().sort('-MsgId').then((msg) => {
@@ -82,7 +80,6 @@ var highestIdMsg;
       highestIdMsg = 0;
     }
   }).catch((err) => {
-    console.log('error 001');
   });
 
 
@@ -121,15 +118,3 @@ var highestIdMsg;
     increaseHighestIdUsers
  }
  
-
-// THE PAST FORNAT:
-  // await Message.findOne().sort('-score').exec((error, message) => {
-  //   if (error) {
-  //     console.error('Error finding user:', error);
-  //   } else if (message) {
-  //     console.log('message with the highest score:', message);
-  //     highestIdMsg = message;
-  //   } else {
-  //     console.log('No messages found');
-  //   }
-  // });
