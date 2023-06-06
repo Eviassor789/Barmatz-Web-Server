@@ -1,4 +1,4 @@
-import { getChatsByUserName, addChat, getAllChatDataByChatId, isMember } from "../models/chats.js";
+import { getChatsByUserName, addChat, getAllChatDataByChatId, isMember } from "../services/chats.js";
 
 import jwt from "jsonwebtoken";
 const key = "Never gonna give you up";
@@ -15,7 +15,7 @@ function getAllChats(req, res) {
   }
 }
 
-function addNewChat(req, res) {
+async function addNewChat(req, res) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const data = jwt.verify(token, key);
@@ -24,13 +24,13 @@ function addNewChat(req, res) {
     if (username == friendUserName) {
       return res.status(400).send("Thou shalt not talk with thy self");
     }
-    var answer = addChat(username, friendUserName);//return json created chat if addition succeded, else return: ''.
+    var answer = await addChat(username, friendUserName);//return json created chat if addition succeded, else return: ''.
 
-    if (answer != "") {
+    if (answer != null) {
       res.status(200).send(answer);
     }
 
-    res.status(500).send("error occuered");
+    res.status(409).send("no such user");
   } catch (error) {
     res.status(500).send("error occuered");
   }
