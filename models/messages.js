@@ -3,25 +3,26 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const MessageModel = new Schema({
-    _id: {
-        type: Number,
-    },
-    content: {
-        type: String,
-        required: true
-    },
-    sender: {
-        type: String,
-        required: true
-    },
-    created: {
-        type: Date,
-        default: Date.now
-    }
+  MsgId: {
+    type: Number,
+    unique: true, // Set the field as unique
+    index: true, // Create an index for efficient querying
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  sender: {
+    type: String,
+    required: true,
+  },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const Message = mongoose.model('Message', MessageModel);
+const Message = mongoose.model("Message", MessageModel);
 
-export{
-    Message
-}
+export { Message };

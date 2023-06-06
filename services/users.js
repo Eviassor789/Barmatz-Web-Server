@@ -1,13 +1,18 @@
 import {User} from "../models/users.js";
+import { getHighestIdUsers, increaseHighestIdUsers } from "../app.js";
 
 const addUser = async (profilePic, displayName, password, username) => {
     const doesExistAlready = await readUserByName(username);
     if (doesExistAlready) return null;
-    return await createUser(profilePic, displayName, password, username);
+
+    var userID = getHighestIdUsers()+1;
+    increaseHighestIdUsers();
+
+    return await createUser(userID, profilePic, displayName, password, username);
 } 
 
-const createUser = async (profilePic, displayName, password, username) => {
-    const user = new User({profilePic, displayName, password, username});
+const createUser = async (userID, profilePic, displayName, password, username) => {
+    const user = new User( {"userId":userID, profilePic, displayName, password, username});
     user.chatsList = [];
     return await user.save();
 }

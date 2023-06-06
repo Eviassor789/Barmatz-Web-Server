@@ -1,7 +1,11 @@
 import {Message} from "../models/messages.js";
+import { getHighestIdMsg, increaseHighestIdMsg } from "../app.js";
 
 const createMessage = async (content, sender, created) => {
-    const message = new Message({content, sender});
+    var msgId = getHighestIdMsg()+1;
+    increaseHighestIdMsg();
+
+    const message = new Message({"msgId":msgId ,content, sender});
     if (created) message.created = created;
     return await message.save();
 }

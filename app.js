@@ -8,7 +8,7 @@ import routesTokens from'./routes/tokens.js';
 import routesUsers from './routes/users.js';
 
 // customEnv.env(process.env.NODE_ENV, './config')
-//process.env.CONNECTION_STRING
+//process.env.CONNECTION_STRING 
 mongoose.connect("mongodb://localhost:27017/myDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -38,7 +38,7 @@ app.listen(5000);
 import { User } from './models/users.js';
 import { Chat } from './models/chats.js';
 import { Message } from './models/messages.js';
-import { futimes } from 'fs';
+// import { futimes } from 'fs';
 
 var highestIdUsers;
 var highestIdChats;
@@ -46,39 +46,46 @@ var highestIdMsg;
 
 (async() => {
 
-
-await User.findOne().sort('-score').exec((error, user) => {
-    if (error) {
-      console.error('Error finding user:', error);
-    } else if (user) {
-      console.log('User with the highest score:', user);
-      highestIdUsers = user;
-    } else {
-      console.log('No users found');
-    }
-  });
-
-  await Chat.findOne().sort('-score').exec((error, chat) => {
-    if (error) {
-      console.error('Error finding user:', error);
-    } else if (chat) {
-      console.log('chat with the highest score:', chat);
-      highestIdChats = chat;
+    await Chat.findOne().sort('-chatId').then((chat) => {
+    
+    if (chat) {
+      console.log('the highest ID of chat :', chat.chatId);
+      highestIdChats = chat.chatId;
     } else {
       console.log('No chats found');
+      highestIdChats = 0;
     }
+  }).catch((err) => {
+    console.log('error 001');
   });
 
-  await Message.findOne().sort('-score').exec((error, message) => {
-    if (error) {
-      console.error('Error finding user:', error);
-    } else if (message) {
-      console.log('message with the highest score:', message);
-      highestIdMsg = message;
+  await User.findOne().sort('-userId').then((user) => {
+    
+    if (user) {
+      console.log('the highest ID of user :', user.userId);
+      highestIdUsers = user.userId;
     } else {
-      console.log('No messages found');
+      console.log('No users found');
+      highestIdUsers = 0;
     }
+  }).catch((err) => {
+    console.log('error 001');
   });
+
+  await Message.findOne().sort('-MsgId').then((msg) => {
+    
+    if (msg) {
+      console.log('the highest ID of Msg :', msg.MsgId);
+      highestIdMsg = msg.MsgId;
+    } else {
+      console.log('No msg found');
+      highestIdMsg = 0;
+    }
+  }).catch((err) => {
+    console.log('error 001');
+  });
+
+
 })();
 
  function getHighestIdUsers(){
@@ -115,4 +122,14 @@ await User.findOne().sort('-score').exec((error, user) => {
  }
  
 
-
+// THE PAST FORNAT:
+  // await Message.findOne().sort('-score').exec((error, message) => {
+  //   if (error) {
+  //     console.error('Error finding user:', error);
+  //   } else if (message) {
+  //     console.log('message with the highest score:', message);
+  //     highestIdMsg = message;
+  //   } else {
+  //     console.log('No messages found');
+  //   }
+  // });

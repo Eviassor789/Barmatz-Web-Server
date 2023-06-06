@@ -27,12 +27,12 @@ async function addNewChat(req, res) {
     var answer = await addChat(username, friendUserName);//return json created chat if addition succeded, else return: ''.
 
     if (answer != null) {
-      res.status(200).send(answer);
+      return res.status(200).send(answer);
     }
 
-    res.status(409).send("no such user");
+    return res.status(409).send("no such user");
   } catch (error) {
-    res.status(500).send("error occuered");
+    return res.status(500).send("error occuered");
   }
 }
 

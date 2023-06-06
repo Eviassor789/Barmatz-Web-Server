@@ -4,6 +4,12 @@ import { createUser, readUserByName } from "../services/users.js";
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+    userId:{
+        type: Number,
+        unique: true,  // Set the field as unique
+        index: true,    // Create an index for efficient querying
+        required: true
+    },
     profilePic: {
         type: String,
         required: true
