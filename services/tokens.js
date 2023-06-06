@@ -3,7 +3,6 @@ import { readUserByName } from "../services/users.js";
 const validateTokenParams = async (name, password) => {
   if (name != "" && password != "") {
     var answer = await hasUser(name, password);
-    console.log(answer);
     return answer;
 
   } else return false;

@@ -14,7 +14,7 @@ const MessageModel = new Schema({
     required: true,
   },
   sender: {
-    type: String,
+    type: JSON,
     required: true,
   },
   created: {

@@ -23,9 +23,6 @@ const isLoggedIn =  (req, res, next) => {
 
 const getToken = async (req, res) => {
   // Check credentials
-  console.log(req.body.username);
-  console.log(req.body.password);
-  
   try{
 
   if (await validateTokenParams(req.body.username, req.body.password)) {
