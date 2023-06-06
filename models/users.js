@@ -30,7 +30,6 @@ const UserSchema = new Schema({
     },
     chatsList: {
         type: [Number],
-        default: []
     },
 });
 

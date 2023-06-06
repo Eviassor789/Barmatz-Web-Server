@@ -13,7 +13,6 @@ const addUser = async (profilePic, displayName, password, username) => {
 
 const createUser = async (userID, profilePic, displayName, password, username) => {
     const user = new User( {"userId":userID, profilePic, displayName, password, username});
-    user.chatsList = [];
     return await user.save();
 }
 
@@ -24,6 +23,7 @@ const readUserByName = async (username) => {
 
 const getChatsListOfUserByUsername = async (username) => {
     const user = await readUserByName(username);
+    
     if (!user) return null;
     return user.chatsList;
 }
@@ -47,11 +47,11 @@ const updateChatsListOfUserByName = async (username, chatsList) => {
     return await user.save();
 }
 
-const deleteUserByName = async (username) => {
-    const user = await readUserByName(username);
-    if (!user) return null;
-    return await user.deleteOne();
-}
+// const deleteUserByName = async (username) => {
+//     const user = await readUserByName(username);
+//     if (!user) return null;
+//     return await user.deleteOne();
+// }
 
 //CRUD
 
@@ -59,7 +59,7 @@ export {
     createUser,
     readUserByName,
     updateChatsListOfUserByName,
-    deleteUserByName,
+    // deleteUserByName,
     getChatsListOfUserByUsername,
     getProfilePicOfUserByUsername,
     getDisplasyNameUserByUsername,

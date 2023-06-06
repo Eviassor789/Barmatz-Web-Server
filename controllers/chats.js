@@ -1,4 +1,11 @@
-import { getChatsByUserName, addChat, getAllChatDataByChatId, isMember } from "../services/chats.js";
+import {
+  getChatsByUserName,
+  addChat,
+  getAllChatDataByChatId,
+  isMember,
+  deleteChatById,
+} from "../services/chats.js";
+import { addMsgByChatId } from "../services/chats.js";
 
 import jwt from "jsonwebtoken";
 const key = "Never gonna give you up";
@@ -24,7 +31,7 @@ async function addNewChat(req, res) {
     if (username == friendUserName) {
       return res.status(400).send("Thou shalt not talk with thy self");
     }
-    var answer = await addChat(username, friendUserName);//return json created chat if addition succeded, else return: ''.
+    var answer = await addChat(username, friendUserName); //return json created chat if addition succeded, else return: ''.
 
     if (answer != null) {
       return res.status(200).send(answer);
@@ -44,13 +51,13 @@ function getChatDetails(req, res) {
   var answer_json = getAllChatDataByChatId(username, chatId);
   if (answer_json == "") {
     return res.status(401).json({
-      "type": "https://tools.ietf.org/html/rfc7235#section-3.1",
-      "title": "Unauthorized",
-      "status": 401,
-      "traceId": "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00"
+      type: "https://tools.ietf.org/html/rfc7235#section-3.1",
+      title: "Unauthorized",
+      status: 401,
+      traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
     });
   }
-  return res(200).send(answer_json);
+  return res.status(200).send(answer_json);
 }
 
 function deleteChat(req, res) {
@@ -59,28 +66,40 @@ function deleteChat(req, res) {
   const username = data.username;
   const chatId = req.params.id;
 
-  if(!isMember(username, chatId)){
+  if (!isMember(username, chatId)) {
     return res.status(401).json({
-      "type": "https://tools.ietf.org/html/rfc7235#section-3.1",
-      "title": "Unauthorized",
-      "status": 401,
-      "traceId": "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00"
+      type: "https://tools.ietf.org/html/rfc7235#section-3.1",
+      title: "Unauthorized",
+      status: 401,
+      traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
     });
   }
-  
+  deleteChatById(chatId);
 
-
-  return res.json();
+  return res.status(200).send("chat deleted succesfully");
 }
 
-function sendMessage(req, res) {
+async function sendMessage(req, res) {
   const token = req.headers.authorization.split(" ")[1];
   const data = jwt.verify(token, key);
   const username = data.username;
   const chatId = req.params.id;
   const content = req.body.msg;
 
-  return res.json();
+  if (!(await isMember(username, chatId))) {
+    return res.status(401).json({
+      type: "https://tools.ietf.org/html/rfc7235#section-3.1",
+      title: "Unauthorized",
+      status: 401,
+      traceId: "00-88c61470518dfaf201277e1fff706aab-a0b3b80cddabdb4a-00",
+    });
+  }
+
+  var answer_json = await addMsgByChatId(username, chatId, content);
+  if (answer_json != null) {
+    return res.status(200).send(answer_json);
+  }
+  return res.status(500).send("error occuered on sending msg");
 }
 
 function getChatMesaages(req, res) {

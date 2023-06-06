@@ -4,54 +4,79 @@ import {
   getProfilePicOfUserByUsername,
   getDisplasyNameUserByUsername,
   readUserByName,
-  updateChatsListOfUserByName
+  updateChatsListOfUserByName,
 } from "../services/users.js";
-import { readMessage } from "../services/messages.js";
-import { getHighestIdChats, increaseHighestIdChats } from "../app.js";
-
+import { readMessage, deleteMessage } from "../services/messages.js";
+import {
+  getHighestIdChats,
+  increaseHighestIdChats,
+  getHighestIdMsg,
+  increaseHighestIdMsg,
+} from "../app.js";
+import { Message } from "../models/messages.js";
 
 const createChat = async (user1, user2) => {
   var chatId = getHighestIdChats() + 1;
   increaseHighestIdChats();
 
-  const chat = new Chat({"chatId":chatId, user1, user2 });
+  const chat = new Chat({ chatId: chatId, user1, user2 });
   chat.messagesList = [];
 
   return await chat.save();
 };
 
-const readChat = async (id) => {
-  return await Chat.findById(id);
+const readChat = async (chatId) => {
+  return await Chat.findOne({ chatId });
 };
 
 const getUser1 = async (id) => {
   const chat = await readChat(id);
-  if (!message) return null;
+  if (!chat) return null;
   return chat.user1;
 };
 
 const getUser2 = async (id) => {
   const chat = await readChat(id);
-  if (!message) return null;
+  if (!chat) return null;
   return chat.user2;
 };
 
 const getMessagesList = async (id) => {
   const chat = await readChat(id);
-  if (!message) return null;
+  if (!chat) return null;
   return chat.messagesList;
 };
 
 const updateMessagesListOfChat = async (id, messagesList) => {
   const chat = await readChat(id);
-  if (!message) return null;
+  if (chat == null) return null;
   chat.messagesList = messagesList;
   return await chat.save();
 };
 
-const deleteChat = async (id) => {
+const deleteChatById = async (id) => {
   const chat = await readChat(id);
-  if (!chat) return null;
+  if (chat == null) return null;
+
+  var user_one_name = await getUser1(id);
+  var user_one = await readUserByName(user_one_name);
+  
+  var list = user_one.chatsList; 
+  var newList = await list.filter((item) => {item !== id});
+  // newList.filter
+  user_one.chatsList = newList;
+  await user_one.save();
+
+  var user_two_name = await getUser2(id);
+  var user_two = await readUserByName(user_two_name);
+  user_two.chatsList = user_two.chatsList.filter((item) => {item !== id});
+  await user_two.save();
+
+  var msgList = chat.messagesList;
+  msgList.forEach(async (msg) => {
+    deleteMessage(msg);
+  });
+
   return await chat.deleteOne();
 };
 
@@ -100,7 +125,15 @@ const getChatsByUserName = async (username) => {
 
 const getLastMsgByChatId = async (chatId) => {
   var messagesList = await readChat(chatId).messagesList;
-  return messagesList[messagesList.length - 1];
+
+  var last_msg = await readMessage(messagesList[messagesList.length - 1]);
+
+  var msg_json = { id: "", created: "", content: "" };
+  msg_json.id = messagesList[messagesList.length - 1];
+  msg_json.created = last_msg.created;
+  msg_json.content = last_msg.content;
+
+  return msg_json;
 
   //get message json (the last table in the pdf) of the chat Id. looks like this
   // {
@@ -136,7 +169,7 @@ const addChat = async (username, friendUserName) => {
   await updateChatsListOfUserByName(username, chatsList1);
   var chatsList2 = await getChatsListOfUserByUsername(friendUserName);
   chatsList2.push(chat.chatId);
-  await updateChatsListOfUserByName(username, chatsList2);
+  await updateChatsListOfUserByName(friendUserName, chatsList2);
 
   var response_json = { id: "", user: {} };
   response_json.id = chat.chatId;
@@ -181,7 +214,9 @@ const getMessageDetailsById = async (id) => {
 
 const isMember = async (username, chatId) => {
   var chatsIdList = await getChatsListOfUserByUsername(username);
-  return chatsIdList.includes(chatId); // if the user asks for a chat he is not a member of - return false.
+  var d = await chatsIdList.includes(chatId);
+  console.log("d " + d);
+  return d;  // if the user asks for a chat he is not a member of - return false.
 };
 
 const getAllChatDataByChatId = async (username, chatId) => {
@@ -236,13 +271,51 @@ const getAllChatDataByChatId = async (username, chatId) => {
   // }
 };
 
+// const createChat = async (user1, user2) => {
+//   var chatId = getHighestIdChats() + 1;
+//   increaseHighestIdChats();
+
+//   const chat = new Chat({ chatId: chatId, user1, user2 });
+//   chat.messagesList = [];
+
+//   return await chat.save();
+// };
+
+const addMsgByChatId = async (username, chatId, content) => {
+  var msgId = getHighestIdMsg() + 1;
+  increaseHighestIdMsg();
+  var sender_Json = await getUserDetailsByUsername(username);
+  console.log("sender_Json " + sender_Json);
+
+  try {
+    const message = new Message({ MsgId: msgId, content, sender: sender_Json });
+    await message.save();
+
+    var chat = await readChat(chatId);
+    var msgList = chat.messagesList;
+    msgList.push(msgId);
+    chat.messagesList = msgList;
+    await chat.save();
+
+    var msg_Json = {
+      id: msgId,
+      created: message.created,
+      sender: sender_Json,
+      content: content,
+    };
+    return msg_Json;
+  } catch (error) {
+    return null;
+  }
+};
+
 // FROM MODEL: END
 
 export {
   createChat,
   readChat,
   updateMessagesListOfChat,
-  deleteChat,
+  deleteChatById,
   getUser1,
   getUser2,
   getMessagesList,
@@ -251,4 +324,5 @@ export {
   addChat,
   getAllChatDataByChatId,
   isMember,
+  addMsgByChatId,
 };

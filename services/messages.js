@@ -10,8 +10,8 @@ const createMessage = async (content, sender, created) => {
     return await message.save();
 }
 
-const readMessage = async (id) => {
-    return await Message.findById(id);
+const readMessage = async (MsgId) => {
+    return await Message.findOne({MsgId});
 }
 
 const updateContentOfMessage = async (id, content) => {
