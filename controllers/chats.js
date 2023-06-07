@@ -18,7 +18,7 @@ async function getAllChats(req, res) {
     const data = jwt.verify(token, key);
     const username = data.username;
     // var chats_list = await getChatsByUserName(username);
-    return res.status(200).send(await getChatsByUserName(username));
+    return res.status(200).send((await getChatsByUserName(username)).sort(((a, b) => {a.id - b.id})));
   } catch (error) {
     res.status(500).send("error occuered");
   }

@@ -102,7 +102,7 @@ const getChatsByUserName = async (username) => {
   await Promise.all(chatsIdList.map(async (element) => {
     var user_one = await getUser1(element);
     var user_two = await getUser2(element);
-    var chat_json = { id: "", user: {}, lastMessage: {} };
+    var chat_json = { id: 0, user: {}, lastMessage: {} };
     chat_json.id = element;
     chat_json.user =
       user_one == username
@@ -111,6 +111,7 @@ const getChatsByUserName = async (username) => {
     chat_json.lastMessage = await getLastMsgByChatId(element);
 
     response.push(chat_json);
+    await response.sort((a, b) => {a.id - b.id});
   }));
 
   // that is the format of each chat_json
@@ -128,6 +129,7 @@ const getChatsByUserName = async (username) => {
   //    }
   // }
 
+  response.sort((a, b) => {a.id - b.id});
   return response;
 };
 
@@ -302,7 +304,7 @@ const addMsgByChatId = async (username, chatId, content) => {
 
     var chat = await readChat(chatId);
     var msgList = chat.messagesList;
-    msgList.push(msgId);
+    msgList.unshift(msgId);
     chat.messagesList = msgList;
     await chat.save();
 
@@ -334,8 +336,9 @@ const getAllMsgByChatId = async (username, chatId) => {
         sender: { username: message.sender.username },
         content: message.content,
       };
-      answer.unshift(msgJson);
-    }));
+      answer.push(msgJson);
+      answer.sort((a, b) => {a.id - b.id});
+    }))
       return answer;
   };
 
