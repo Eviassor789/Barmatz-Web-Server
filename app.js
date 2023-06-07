@@ -6,6 +6,10 @@ import customEnv from 'custom-env';
 import routesChats from './routes/chats.js';
 import routesTokens from'./routes/tokens.js';
 import routesUsers from './routes/users.js';
+import {Server} from "socket.io";
+import http from "http";
+
+
 
 // customEnv.env(process.env.NODE_ENV, './config')
 //process.env.CONNECTION_STRING 
@@ -16,6 +20,14 @@ mongoose.connect("mongodb://localhost:27017/myDB", {
 });
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors : {
+    origin : "http://localhost:3000",
+    method : ["GET", "POST", "DELETE"]
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static('public'));
@@ -28,10 +40,29 @@ app.use('/api/Tokens', routesTokens);
 app.use('/api/Chats', routesChats);
 app.use('/api/Users', routesUsers);
 
+io.on('connection', (socket) => {
+  io.emit('hello', {foo: "bar"});
+  socket.broadcast.emit("hello", {foo : "bar2"});
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+  });
+
+
+  socket.on("sent_message", (CurrentUser) => {
+    io.emit("message_render", {chat :CurrentUser});
+  })
+  socket.on("add_chat", (CurrentUser) => {
+    io.emit("add_chat_render", {chat :CurrentUser});
+  })
+  socket.on("delete_chat", (CurrentUser) => {
+    io.emit("delete_chat_render", {chat :CurrentUser});
+  })
+
+});
+
 // app.listen(process.env.PORT);
 app.listen(5000);
-
-
+server.listen(3333);
 
 // HERE ...
 
