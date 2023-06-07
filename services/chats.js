@@ -149,7 +149,7 @@ const getLastMsgByChatId = async (chatId) => {
     return null;
   }
 
-  var last_msg = await readMessage(messagesList[messagesList.length - 1]);
+  var last_msg = await readMessage(messagesList[0]);
 
   var msg_json = { id: "", created: "", content: "" };
   msg_json.id = messagesList[messagesList.length - 1];
@@ -337,7 +337,7 @@ const getAllMsgByChatId = async (username, chatId) => {
         content: message.content,
       };
       answer.push(msgJson);
-      answer.sort((a, b) => {a.id - b.id});
+      answer.sort((a, b) => {b.id - a.id});
     }))
       return answer;
   };
