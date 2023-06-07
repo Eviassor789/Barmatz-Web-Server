@@ -17,8 +17,8 @@ async function getAllChats(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const data = jwt.verify(token, key);
     const username = data.username;
-    var chats_list = await getChatsByUserName(username);
-    return res.status(200).send(chats_list);
+    // var chats_list = await getChatsByUserName(username);
+    return res.status(200).send(await getChatsByUserName(username));
   } catch (error) {
     res.status(500).send("error occuered");
   }

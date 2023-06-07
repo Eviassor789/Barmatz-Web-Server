@@ -63,10 +63,13 @@ const deleteChatById = async (id) => {
   var user_one = await readUserByName(user_one_name);
 
   var list = user_one.chatsList;
-  var newList = await list.filter((item) => {
-    item !== id;
-  });
-  // newList.filter
+  var newList = [];
+  await Promise.all(list.map(async (chatId) => {
+    if(chatId != id){
+      await newList.push(chatId);
+    }
+  }));
+
   user_one.chatsList = newList;
   await user_one.save();
 
@@ -93,10 +96,10 @@ const getChatsByUserName = async (username) => {
   var response = [];
   var chatsIdList = await getChatsListOfUserByUsername(username);
 
-  if (chatsIdList.length == 0) {
+  if (chatsIdList == null) {
     return response;
   }
-  chatsIdList.forEach(async (element) => {
+  await Promise.all(chatsIdList.map(async (element) => {
     var user_one = await getUser1(element);
     var user_two = await getUser2(element);
     var chat_json = { id: "", user: {}, lastMessage: {} };
@@ -108,7 +111,7 @@ const getChatsByUserName = async (username) => {
     chat_json.lastMessage = await getLastMsgByChatId(element);
 
     response.push(chat_json);
-  });
+  }));
 
   // that is the format of each chat_json
   // {
@@ -129,8 +132,18 @@ const getChatsByUserName = async (username) => {
 };
 
 const getLastMsgByChatId = async (chatId) => {
-  var messagesList = await readChat(chatId).messagesList;
-  if (messagesList.length == 0) {
+  var chat = await readChat(chatId);
+
+  if (chat == null){
+    return null;
+  }
+
+  var messagesList = chat.messagesList;
+  if (messagesList == null) {
+    return null;
+  }
+
+  if(messagesList.length == 0) {
     return null;
   }
 
@@ -199,7 +212,7 @@ const addChat = async (username, friendUserName) => {
 
 const getMessageDetailsById = async (id) => {
   var sender = await readMessage(id).sender;
-  answer_json = { id: "", created: "", sender: {}, content: "" };
+  var answer_json = { id: "", created: "", sender: {}, content: "" };
 
   answer_json.id = id;
   answer_json.created = await readMessage(id).created;
@@ -239,8 +252,8 @@ const getAllChatDataByChatId = async (username, chatId) => {
 
   chat_json.id = chatId;
 
-  chatId.users.push(await getUserDetailsByUsername(user_one));
-  chatId.users.push(await getUserDetailsByUsername(user_two));
+  chat_json.users.push(await getUserDetailsByUsername(user_one));
+  chat_json.users.push(await getUserDetailsByUsername(user_two));
 
   messageIdList.forEach(async (element) => {
     chat_json.messages.push(await getMessageDetailsById(element));
@@ -321,7 +334,7 @@ const getAllMsgByChatId = async (username, chatId) => {
         sender: { username: message.sender.username },
         content: message.content,
       };
-      answer.push(msgJson);
+      answer.unshift(msgJson);
     }));
       return answer;
   };
